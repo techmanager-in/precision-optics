@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   SlidersHorizontal,
   ChevronDown,
@@ -53,6 +53,16 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
 
   const [brandSearchQuery, setBrandSearchQuery] = useState("");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(24);
+
+  // Reset pagination when filter criteria change
+  useEffect(() => {
+    setVisibleCount(24);
+  }, [filterState]);
+
+  const visibleProducts = useMemo(() => {
+    return products.slice(0, visibleCount);
+  }, [products, visibleCount]);
 
   const toggleSection = (key: string) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -773,15 +783,32 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
             </div>
           ) : (
             /* 4-Column Product Grid (Responsive: 1 on mobile, 2 on tablet, 3 on laptop, 4 on desktop) */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onSelectProduct={onSelectProduct}
-                  onOpenVirtualTryOn={onOpenVirtualTryOn}
-                />
-              ))}
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+                {visibleProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onSelectProduct={onSelectProduct}
+                    onOpenVirtualTryOn={onOpenVirtualTryOn}
+                  />
+                ))}
+              </div>
+
+              {visibleCount < products.length && (
+                <div className="flex flex-col items-center justify-center pt-6 pb-4 gap-3">
+                  <p className="text-xs font-sans text-[#786C62]">
+                    Showing <span className="font-bold text-[#2A1E17]">{visibleProducts.length}</span> of{" "}
+                    <span className="font-bold text-[#2A1E17]">{products.length}</span> luxury frames
+                  </p>
+                  <button
+                    onClick={() => setVisibleCount((prev) => prev + 24)}
+                    className="inline-flex items-center gap-2 bg-[#2A1E17] hover:bg-[#C86A28] text-white px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
+                  >
+                    <span>Load More Frames</span>
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </main>

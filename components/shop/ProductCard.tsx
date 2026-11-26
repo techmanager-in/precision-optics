@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useState, useEffect } from "react";
+import React, { memo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Heart, Star, Tag, Zap, Camera } from "lucide-react";
@@ -25,9 +25,13 @@ export const ProductCard = memo(function ProductCard({
   isWishlisted: propIsWishlisted,
 }: ProductCardProps) {
   const router = useRouter();
-  const { isWishlisted: contextIsWishlisted, toggleWishlist } = useWishlist();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { isWishlisted: contextIsWishlisted, toggleWishlist, triggerFlyAnimation } = useWishlist();
   const isWishlisted = propIsWishlisted !== undefined ? propIsWishlisted : contextIsWishlisted(product.id);
   const handleToggle = onToggleWishlist || ((id: string) => toggleWishlist(id, product.name));
+
+  const [isPoppingHeart, setIsPoppingHeart] = useState(false);
+  const [isCardFolding, setIsCardFolding] = useState(false);
 
   // Discount calculation
   const hasDiscount = Boolean(product.originalPrice && product.originalPrice > product.price);
@@ -66,10 +70,38 @@ export const ProductCard = memo(function ProductCard({
     }
   };
 
+  const handleHeartClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!isWishlisted) {
+      setIsCardFolding(true);
+      setIsPoppingHeart(true);
+      setTimeout(() => setIsCardFolding(false), 520);
+      setTimeout(() => setIsPoppingHeart(false), 650);
+
+      if (cardRef.current && triggerFlyAnimation) {
+        triggerFlyAnimation(cardRef.current, {
+          id: product.id,
+          name: product.name,
+          brand: product.brand,
+          price: product.price,
+          originalPrice: product.originalPrice,
+          image: optimizedImgSrc,
+          rating: product.rating,
+        });
+      }
+    }
+
+    handleToggle(product.id);
+  };
+
   return (
     <div
+      ref={cardRef}
       onClick={handleCardClick}
-      className="w-full min-h-[390px] bg-white border border-[#EBE6DF] rounded-[16px] p-4 flex flex-col justify-between relative group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 select-none"
+      className={`w-full min-h-[390px] bg-white border border-[#EBE6DF] rounded-[16px] p-4 flex flex-col justify-between relative group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 select-none ${
+        isCardFolding ? "scale-[0.98] ring-1 ring-[#C86A28]/40 shadow-inner" : ""
+      }`}
     >
       {/* Top Floating Actions: Wishlist Heart & Virtual Try-On */}
       <div className="absolute top-3.5 right-3.5 z-20 flex items-center gap-1.5">
@@ -88,20 +120,19 @@ export const ProductCard = memo(function ProductCard({
         )}
 
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleToggle(product.id);
-          }}
-          className="w-8 h-8 rounded-full bg-white/90 hover:bg-[#C86A28] hover:text-white border border-[#E5E7EB] backdrop-blur-xs flex items-center justify-center transition-all duration-200 focus:outline-none shadow-2xs cursor-pointer"
+          onClick={handleHeartClick}
+          className={`w-8 h-8 rounded-full bg-white/90 hover:bg-[#C86A28] hover:text-white border border-[#E5E7EB] backdrop-blur-xs flex items-center justify-center transition-all duration-200 focus:outline-none shadow-2xs cursor-pointer ${
+            isPoppingHeart ? "scale-125 bg-[#C86A28] text-white" : ""
+          }`}
           title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           aria-label="Add to wishlist"
         >
           <Heart
-            className={`w-3.5 h-3.5 transition-colors ${
-              isWishlisted
-                ? "fill-[#C86A28] text-[#C86A28]"
+            className={`w-3.5 h-3.5 transition-all duration-200 ${
+              isWishlisted || isPoppingHeart
+                ? "fill-[#C86A28] text-[#C86A28] group-hover:fill-white group-hover:text-white"
                 : "text-[#6B7280] group-hover:text-white"
-            }`}
+            } ${isPoppingHeart ? "scale-110" : ""}`}
           />
         </button>
       </div>

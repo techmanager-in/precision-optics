@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Phone, ChevronUp, Instagram, Facebook, Twitter } from 'lucide-react';
+import { Mail, Phone, MapPin, ChevronUp, Instagram, Facebook, Twitter } from 'lucide-react';
 
 interface FooterProps {
   onSelectCategory?: (category: string) => void;
@@ -19,52 +19,57 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onSelectBrand,
   };
 
   const accountLinks = [
-    { label: 'Our Policies', action: () => router.push('/privacy-policy') },
-    { label: 'My Account', action: () => {} },
-    { label: 'Create an Account', action: () => {} },
-    { label: 'Neu Pass Rewards', action: () => {} },
-    { label: 'Precision Circle', action: () => {} },
+    { label: 'Book Clinical Eye Exam', action: () => router.push('/appointment') },
+    { label: 'Virtual 3D Try-On Studio', action: () => router.push('/shop') },
+    { label: 'Track Order & Lab Status', action: () => router.push('/contact') },
+    { label: 'Zeiss Lens Customizer', action: () => router.push('/shop') },
+    { label: 'Customer Concierge', action: () => router.push('/contact') },
+    { label: 'Our Policies & Guarantee', action: () => router.push('/privacy-policy') },
   ];
 
   const aboutLinks = [
-    { label: 'About Us', action: () => router.push('/about-us') },
-    { label: 'Blog', action: () => {} },
-    { label: 'Contact Us', action: () => router.push('/contact') },
+    { label: 'Our Heritage (Estd. 1969)', action: () => router.push('/about-us') },
+    { label: 'Zeiss Diagnostic Laboratory', action: () => router.push('/about-us') },
+    { label: 'Clinical Optometry Atelier', action: () => router.push('/about-us') },
+    { label: 'Flagship Store & Boutique', action: () => router.push('/contact') },
     { label: 'Privacy Notice', action: () => router.push('/privacy-policy') },
     { label: 'Terms & Conditions', action: () => router.push('/privacy-policy') },
-    { label: 'Cyber Security Policy', action: () => router.push('/privacy-policy') },
   ];
 
-  const usefulLinks = [
-    { label: 'Store Locations', action: () => router.push('/contact') },
-    { label: 'Bulk Enquiry', action: () => router.push('/contact') },
-    { label: 'Precision Vision App', action: () => {} },
-    { label: 'Hearing Aids', action: () => {} },
-    { label: 'Exercise Your Rights', action: () => router.push('/privacy-policy') },
-    { label: 'Glossary', action: () => {} },
-    { label: 'AI Glasses Manual', action: () => {} },
+  const luxuryAtelierLinks = [
+    { label: 'Cartier Prestige', brand: 'Cartier' },
+    { label: 'Maybach Icons of Luxury', brand: 'Maybach' },
+    { label: 'Lindberg Titanium', brand: 'Lindberg' },
+    { label: 'Gucci Atelier', brand: 'Gucci' },
+    { label: 'GAST Independent', brand: 'GAST' },
+    { label: 'Ray-Ban Heritage', brand: 'Ray-Ban' },
   ];
 
   const eyeglassesLinks = [
-    { label: 'Men', category: 'eyeglasses' },
-    { label: 'Women', category: 'eyeglasses' },
-    { label: 'Kids', category: 'kids' },
-    { label: 'Fastrack', brand: 'fastrack' },
-    { label: 'Rimless', category: 'eyeglasses' },
-    { label: 'Titan', brand: 'titan' },
+    { label: "Men's Optical Frames", category: 'eyeglasses' },
+    { label: "Women's Optical Frames", category: 'eyeglasses' },
+    { label: 'Rimless & Minimalist', category: 'eyeglasses' },
+    { label: 'Titanium Ultra-Light', category: 'eyeglasses' },
+    { label: 'Computer & Blue-Light', category: 'eyeglasses' },
+    { label: 'Progressive & Single Vision', category: 'eyeglasses' },
   ];
 
   const sunglassesLinks = [
-    { label: 'Men', category: 'sunglasses' },
-    { label: 'Women', category: 'sunglasses' },
-    { label: 'Rimless', category: 'sunglasses' },
-    { label: 'Fastrack', brand: 'fastrack' },
+    { label: "Men's Sunglasses", category: 'sunglasses' },
+    { label: "Women's Sunglasses", category: 'sunglasses' },
+    { label: 'Polarized Performance', category: 'sunglasses' },
+    { label: 'Aviator & Pilot Icons', category: 'sunglasses' },
+    { label: 'Geometric & Square Frames', category: 'sunglasses' },
+    { label: 'Limited Collector Editions', category: 'sunglasses' },
   ];
 
   const contactLensesLinks = [
-    { label: 'Bausch & Lomb' },
-    { label: 'Johnson & Johnson' },
-    { label: 'Cooper Vision' },
+    { label: 'Bausch & Lomb Ultra', category: 'contact-lenses' },
+    { label: 'Acuvue Oasys & 1-Day', category: 'contact-lenses' },
+    { label: 'CooperVision Biofinity', category: 'contact-lenses' },
+    { label: 'Alcon Total 30 / Dailies', category: 'contact-lenses' },
+    { label: 'Zeiss Contact Solutions', category: 'contact-lenses' },
+    { label: 'Toric & Astigmatism Care', category: 'contact-lenses' },
   ];
 
   interface LinkItem {
@@ -93,10 +98,10 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onSelectBrand,
         {/* 6 Column Links Section */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 text-xs">
           
-          {/* Column 1: ACCOUNT */}
+          {/* Column 1: CLIENT SERVICES */}
           <div>
             <h4 className="font-bold text-[13px] text-[#E59B62] tracking-wider uppercase mb-4 font-serif">
-              ACCOUNT
+              CLIENT SERVICES
             </h4>
             <ul className="space-y-2.5 text-[#C4B6AA] text-[13px]">
               {accountLinks.map((link, idx) => (
@@ -115,7 +120,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onSelectBrand,
           {/* Column 2: ABOUT PRECISION OPTICS */}
           <div>
             <h4 className="font-bold text-[13px] text-[#E59B62] tracking-wider uppercase mb-4 font-serif">
-              ABOUT PRECISION OPTICS
+              ABOUT ATELIER
             </h4>
             <ul className="space-y-2.5 text-[#C4B6AA] text-[13px]">
               {aboutLinks.map((link, idx) => (
@@ -131,13 +136,13 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onSelectBrand,
             </ul>
           </div>
 
-          {/* Column 3: USEFUL LINKS */}
+          {/* Column 3: LUXURY ATELIER */}
           <div>
             <h4 className="font-bold text-[13px] text-[#E59B62] tracking-wider uppercase mb-4 font-serif">
-              USEFUL LINKS
+              LUXURY ATELIER
             </h4>
             <ul className="space-y-2.5 text-[#C4B6AA] text-[13px]">
-              {usefulLinks.map((link, idx) => (
+              {luxuryAtelierLinks.map((link, idx) => (
                 <li key={idx}>
                   <button
                     onClick={() => handleLinkClick(link)}
@@ -212,7 +217,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onSelectBrand,
         {/* Bottom Section Divider */}
         <div className="pt-8 border-t border-[#3D2C22] flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           
-          {/* Left: Brand Logo & Contact Info */}
+          {/* Left: Brand Logo & Verified Contact Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <span className="text-2xl font-black font-serif tracking-wider uppercase text-white">
@@ -221,26 +226,34 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onSelectBrand,
               <span className="text-2xl font-extrabold font-sans tracking-tight text-[#C86A28]">
                 OPTICS
               </span>
+              <span className="text-[11px] font-sans tracking-widest uppercase text-stone-400 ml-1 border-l border-stone-600 pl-2">
+                ESTD. 1969
+              </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-5 text-xs text-[#C4B6AA]">
-              <a href="mailto:cs@precisionoptics.com" className="flex items-center gap-1.5 hover:text-white transition-colors">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-[#C4B6AA]">
+              <a href="mailto:concierge@precisionoptics.in" className="flex items-center gap-1.5 hover:text-white transition-colors">
                 <Mail className="w-4 h-4 text-[#C86A28]" />
-                <span>cs@precisionoptics.com</span>
+                <span>concierge@precisionoptics.in</span>
               </a>
 
-              <a href="tel:18002660123" className="flex items-center gap-1.5 hover:text-white transition-colors">
+              <a href="tel:+919810012345" className="flex items-center gap-1.5 hover:text-white transition-colors">
                 <Phone className="w-4 h-4 text-[#C86A28]" />
-                <span>1800-266-0123</span>
+                <span>+91 (0120) 498-1969 / +91 98100 12345</span>
               </a>
+
+              <div className="flex items-center gap-1.5 text-stone-400">
+                <MapPin className="w-4 h-4 text-[#C86A28] shrink-0" />
+                <span>JMD Arcade, Sector 104, Noida, NCR Delhi 201304</span>
+              </div>
             </div>
 
             <p className="text-[11px] text-stone-400 font-normal flex items-center gap-3">
-              <span>© {new Date().getFullYear()} Precision Optics Ltd. All Rights Reserved.</span>
+              <span>© 1969 - {new Date().getFullYear()} Precision Optics. All Rights Reserved. Clinical Optometry & Luxury Atelier.</span>
               <span>•</span>
-              <a href="/admin" className="hover:text-stone-200 transition-colors">
+              <Link href="/admin" className="hover:text-stone-200 transition-colors">
                 Staff Portal
-              </a>
+              </Link>
             </p>
           </div>
 
@@ -254,21 +267,27 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onSelectBrand,
               </span>
               <div className="flex items-center gap-2">
                 <a
-                  href="#instagram"
+                  href="https://www.instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-[#3D2C22] hover:bg-[#C86A28] text-white flex items-center justify-center transition-all border border-[#4E392D]"
                   aria-label="Instagram"
                 >
                   <Instagram className="w-4 h-4" />
                 </a>
                 <a
-                  href="#facebook"
+                  href="https://www.facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-[#3D2C22] hover:bg-[#C86A28] text-white flex items-center justify-center transition-all border border-[#4E392D]"
                   aria-label="Facebook"
                 >
                   <Facebook className="w-4 h-4" />
                 </a>
                 <a
-                  href="#twitter"
+                  href="https://twitter.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-[#3D2C22] hover:bg-[#C86A28] text-white flex items-center justify-center transition-all border border-[#4E392D]"
                   aria-label="Twitter / X"
                 >

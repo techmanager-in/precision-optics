@@ -39,7 +39,7 @@ export const JustDroppedSection: React.FC<JustDroppedSectionProps> = ({
     return list.length > 0 ? list : products.slice().reverse();
   }, [products]);
 
-  const displayedProducts = activeTab === 'new' ? justDroppedProducts : bestSellerProducts;
+  const displayedProducts = (activeTab === 'new' ? justDroppedProducts : bestSellerProducts).slice(0, 16);
 
   useEffect(() => {
     if (containerRef.current) {

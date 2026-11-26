@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import { useAuth } from "./AuthContext";
+import { WishlistFlyOverlay, WishlistFlyOverlayRef, WishlistFlyData } from "@/components/wishlist/WishlistFlyOverlay";
 
 export interface WishlistContextType {
   wishlistIds: string[];
@@ -17,6 +18,7 @@ export interface WishlistContextType {
   toggleWishlistDrawer: () => void;
   sessionId: string;
   isSyncing: boolean;
+  triggerFlyAnimation?: (cardElement: HTMLElement, product: WishlistFlyData) => void;
 }
 
 const WISHLIST_STORAGE_KEY = "precision_optics_wishlist_v2";
@@ -206,6 +208,15 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const closeWishlist = useCallback(() => setIsWishlistOpen(false), []);
   const toggleWishlistDrawer = useCallback(() => setIsWishlistOpen((prev) => !prev), []);
 
+  const flyOverlayRef = useRef<WishlistFlyOverlayRef | null>(null);
+
+  const triggerFlyAnimation = useCallback(
+    (cardElement: HTMLElement, product: WishlistFlyData) => {
+      flyOverlayRef.current?.trigger(cardElement, product);
+    },
+    []
+  );
+
   return (
     <WishlistContext.Provider
       value={{
@@ -221,9 +232,11 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         toggleWishlistDrawer,
         sessionId,
         isSyncing,
+        triggerFlyAnimation,
       }}
     >
       {children}
+      <WishlistFlyOverlay ref={flyOverlayRef} />
     </WishlistContext.Provider>
   );
 };

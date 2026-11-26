@@ -87,7 +87,7 @@ export const CollectorsEditionSection: React.FC<CollectorsEditionSectionProps> =
             className="flex gap-3.5 sm:gap-4.5 overflow-x-auto scrollbar-none scroll-smooth pb-4 pt-1 px-1 cursor-grab active:cursor-grabbing select-none"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {collectorProducts.map((product) => (
+            {collectorProducts.slice(0, 16).map((product) => (
               <HomeProductCard
                 key={product.id}
                 product={product}

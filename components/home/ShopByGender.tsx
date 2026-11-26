@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 interface ShopByGenderProps {
-  onSelectGender: (gender: 'men' | 'women' | 'kids') => void;
+  onSelectGender?: (gender: 'men' | 'women' | 'kids') => void;
   activeGender?: string[];
   activeCategory?: string;
   onExploreShop?: () => void;
@@ -16,195 +17,174 @@ export const ShopByGender: React.FC<ShopByGenderProps> = ({
   onExploreShop,
   onSelectCategory
 }) => {
+  const router = useRouter();
   const [selectedPill, setSelectedPill] = useState<'all' | 'men' | 'women'>('all');
 
   const handlePillClick = (pill: 'all' | 'men' | 'women') => {
     setSelectedPill(pill);
-    if (pill === 'men') {
-      onSelectGender('men');
-    } else if (pill === 'women') {
-      onSelectGender('women');
-    } else {
-      if (onSelectCategory) onSelectCategory('all');
+    if (pill === 'men' && onSelectGender) {
+      // Keep state locally, or filter on click
     }
   };
 
-  const handleCategoryClick = (categoryKey: string) => {
-    if (onSelectCategory) {
-      onSelectCategory(categoryKey);
+  const handleCardClick = (categoryKey: string, extraParam?: string) => {
+    let url = `/shop?category=${categoryKey}`;
+    if (selectedPill !== 'all') {
+      url += `&gender=${selectedPill}`;
     }
-    if (onExploreShop) {
-      onExploreShop();
+    if (extraParam) {
+      url += `&${extraParam}`;
+    }
+
+    if (onSelectCategory && selectedPill === 'all' && !extraParam) {
+      onSelectCategory(categoryKey);
+    } else {
+      router.push(url);
     }
   };
 
   return (
     <section 
       id="shop-by-category-section" 
-      className="relative py-8 sm:py-12 overflow-hidden border-b border-[#C8B09C]"
+      className="relative py-6 sm:py-8 md:py-10 overflow-hidden border-b border-[#C8B09C]"
       style={{
-        background: 'linear-gradient(135deg, #EBD9C8 0%, #DFCBBA 40%, #C3A790 80%, #7B5B47 100%)'
+        background: 'linear-gradient(135deg, #F5E2D3 0%, #E9D3BE 35%, #DCC3AD 70%, #C8A68D 100%)'
       }}
     >
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-[1280px] mx-auto px-2 sm:px-4 lg:px-6 relative z-10">
         
-        {/* Title Matching Figma exact typography */}
-        <div className="text-center mb-4 sm:mb-5">
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-[40px] font-normal text-[#2A1E17] tracking-tight">
-            Shop by <span className="font-serif italic font-normal text-[#2A1E17]">Category</span>
-          </h2>
-        </div>
-
-        {/* Pill Switcher */}
-        <div className="flex justify-center mb-7 sm:mb-9">
-          <div className="inline-flex items-center bg-[#6B5140]/45 backdrop-blur-md p-1 rounded-full border border-white/20 shadow-inner">
-            <button
-              onClick={() => handlePillClick('all')}
-              className={`px-6 sm:px-7 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 focus:outline-none cursor-pointer ${
-                selectedPill === 'all'
-                  ? 'bg-white text-[#2A1E17] shadow-md font-semibold'
-                  : 'text-white/90 hover:text-white'
-              }`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => handlePillClick('men')}
-              className={`px-6 sm:px-7 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 focus:outline-none cursor-pointer ${
-                selectedPill === 'men'
-                  ? 'bg-white text-[#2A1E17] shadow-md font-semibold'
-                  : 'text-white/90 hover:text-white'
-              }`}
-            >
-              Men
-            </button>
-            <button
-              onClick={() => handlePillClick('women')}
-              className={`px-6 sm:px-7 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 focus:outline-none cursor-pointer ${
-                selectedPill === 'women'
-                  ? 'bg-white text-[#2A1E17] shadow-md font-semibold'
-                  : 'text-white/90 hover:text-white'
-              }`}
-            >
-              Women
-            </button>
-          </div>
-        </div>
-
-        {/* 2-Column Grid Container matching Figma 580px : 580px */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 items-center">
-          
-          {/* LEFT BLOCK: Dual Showcase Image with 2 Interactive Click Zones */}
-          <div className="relative w-full max-w-[580px] mx-auto rounded-[24px] group">
-            <div className="relative w-full aspect-[580/315] select-none">
-              <Image
-                src="/images/figma/cat_dual_showcase.png"
-                alt="Shop Sunglasses & Eyeglasses"
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 580px"
-                className="object-contain drop-shadow-[0_12px_24px_rgba(42,30,23,0.18)] transition-transform duration-300 group-hover:scale-[1.01]"
-              />
-              {/* Clickable Left Half: Sunglasses */}
-              <button
-                onClick={() => handleCategoryClick('sunglasses')}
-                className="absolute left-0 top-0 w-1/2 h-full z-20 cursor-pointer rounded-l-[24px] focus:outline-none group/sun transition-colors hover:bg-black/[0.02]"
-                aria-label="Shop Sunglasses"
-              />
-              {/* Clickable Right Half: Eyeglasses */}
-              <button
-                onClick={() => handleCategoryClick('eyeglasses')}
-                className="absolute right-0 top-0 w-1/2 h-full z-20 cursor-pointer rounded-r-[24px] focus:outline-none group/eye transition-colors hover:bg-black/[0.02]"
-                aria-label="Shop Eyeglasses"
-              />
-            </div>
-          </div>
-
-          {/* RIGHT BLOCK: 5 Category Tiles Grid */}
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 max-w-[580px] mx-auto w-full">
+        {/* Horizontal Scroll Wrapper on small screens to preserve perfect proportions */}
+        <div className="overflow-x-auto scrollbar-none pb-2">
+          <div className="relative w-full min-w-[620px] sm:min-w-0 aspect-[1024/352] rounded-[24px] sm:rounded-[32px] overflow-hidden select-none drop-shadow-[0_12px_32px_rgba(42,30,23,0.08)]">
             
-            {/* Column 1: Smart Glasses (tall) + Computer Glasses */}
-            <div className="flex flex-col gap-3 sm:gap-4">
-              {/* Smart Glasses */}
-              <button
-                onClick={() => handleCategoryClick('meta-smart')}
-                className="relative w-full aspect-[282/204] rounded-[20px] overflow-hidden group focus:outline-none cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl drop-shadow-[0_8px_16px_rgba(0,0,0,0.06)]"
-              >
-                <Image
-                  src="/images/figma/cat_smart_glasses_hd.png"
-                  alt="Smart Glasses"
-                  fill
-                  sizes="(max-width: 768px) 50vw, 282px"
-                  className="object-contain"
-                />
-              </button>
+            {/* Master Showcase Banner Image */}
+            <Image
+              src="/images/category-bento/shop_by_category_banner_2x.png"
+              alt="Shop by Category - Sunglasses, Eyeglasses, Smart Glasses, Computer Glasses, Polarized, Reading Glasses"
+              fill
+              priority
+              sizes="(max-width: 1280px) 100vw, 1280px"
+              className="object-cover"
+            />
 
-              {/* Computer Glasses */}
-              <button
-                onClick={() => handleCategoryClick('eyeglasses')}
-                className="relative w-full aspect-[282/94] rounded-[18px] overflow-hidden group focus:outline-none cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg drop-shadow-[0_6px_12px_rgba(0,0,0,0.05)]"
-              >
-                <Image
-                  src="/images/figma/cat_computer_glasses_hd.png"
-                  alt="Computer Glasses"
-                  fill
-                  sizes="(max-width: 768px) 50vw, 282px"
-                  className="object-contain"
-                />
-              </button>
-            </div>
+            {/* ======================================================== */}
+            {/* PILL SWITCHER CLICKABLE ZONES & ACTIVE OVERLAYS          */}
+            {/* ======================================================== */}
+            
+            {/* ALL Pill */}
+            <button
+              type="button"
+              onClick={() => handlePillClick('all')}
+              style={{ left: '39.5%', width: '5.6%', top: '15.0%', height: '8.5%' }}
+              className="absolute z-20 rounded-full focus:outline-none cursor-pointer"
+              title="Filter by All"
+              aria-label="Filter All Categories"
+            />
 
-            {/* Column 2: Powered Sunglasses + Contact Lenses + Reading Glasses */}
-            <div className="flex flex-col gap-3 sm:gap-4">
-              {/* Powered Sunglasses */}
-              <button
-                onClick={() => handleCategoryClick('sunglasses')}
-                className="relative w-full aspect-[282/94] rounded-[18px] overflow-hidden group focus:outline-none cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg drop-shadow-[0_6px_12px_rgba(0,0,0,0.05)]"
+            {/* MEN Pill */}
+            <button
+              type="button"
+              onClick={() => handlePillClick('men')}
+              style={{ left: '45.3%', width: '5.6%', top: '15.0%', height: '8.5%' }}
+              className="absolute z-20 rounded-full focus:outline-none cursor-pointer"
+              title="Filter for Men"
+              aria-label="Filter Categories for Men"
+            />
+            {selectedPill === 'men' && (
+              <div
+                style={{ left: '45.3%', width: '5.6%', top: '15.0%', height: '8.5%' }}
+                className="absolute z-10 pointer-events-none bg-white text-[#2A1E17] font-semibold text-[10px] sm:text-xs md:text-sm rounded-full shadow-md flex items-center justify-center transition-all duration-200"
               >
-                <Image
-                  src="/images/figma/cat_powered_sunglasses_hd.png"
-                  alt="Powered Sunglasses"
-                  fill
-                  sizes="(max-width: 768px) 50vw, 282px"
-                  className="object-contain"
-                />
-              </button>
+                Men
+              </div>
+            )}
 
-              {/* Contact Lenses */}
-              <button
-                onClick={() => handleCategoryClick('contact-lenses')}
-                className="relative w-full aspect-[282/94] rounded-[18px] overflow-hidden group focus:outline-none cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg drop-shadow-[0_6px_12px_rgba(0,0,0,0.05)]"
+            {/* WOMEN Pill */}
+            <button
+              type="button"
+              onClick={() => handlePillClick('women')}
+              style={{ left: '51.1%', width: '6.8%', top: '15.0%', height: '8.5%' }}
+              className="absolute z-20 rounded-full focus:outline-none cursor-pointer"
+              title="Filter for Women"
+              aria-label="Filter Categories for Women"
+            />
+            {selectedPill === 'women' && (
+              <div
+                style={{ left: '51.1%', width: '6.8%', top: '15.0%', height: '8.5%' }}
+                className="absolute z-10 pointer-events-none bg-white text-[#2A1E17] font-semibold text-[10px] sm:text-xs md:text-sm rounded-full shadow-md flex items-center justify-center transition-all duration-200"
               >
-                <Image
-                  src="/images/figma/cat_contact_lenses_hd.png"
-                  alt="Contact Lenses"
-                  fill
-                  sizes="(max-width: 768px) 50vw, 282px"
-                  className="object-contain"
-                />
-              </button>
+                Women
+              </div>
+            )}
 
-              {/* Reading Glasses */}
-              <button
-                onClick={() => handleCategoryClick('eyeglasses')}
-                className="relative w-full aspect-[282/94] rounded-[18px] overflow-hidden group focus:outline-none cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg drop-shadow-[0_6px_12px_rgba(0,0,0,0.05)]"
-              >
-                <Image
-                  src="/images/figma/cat_reading_glasses_hd.png"
-                  alt="Reading Glasses"
-                  fill
-                  sizes="(max-width: 768px) 50vw, 282px"
-                  className="object-contain"
-                />
-              </button>
-            </div>
+            {/* ======================================================== */}
+            {/* 6 CATEGORY CARDS INTERACTIVE CLICK ZONES & HOVER RINGS   */}
+            {/* ======================================================== */}
+
+            {/* Card 1: Sunglasses */}
+            <button
+              type="button"
+              onClick={() => handleCardClick('sunglasses')}
+              style={{ left: '4.5%', width: '22.5%', top: '26.5%', height: '61.5%' }}
+              className="group absolute z-20 rounded-[20px] sm:rounded-[26px] focus:outline-none cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-[#C86A28]/40 hover:bg-black/[0.02]"
+              title="Shop Sunglasses"
+              aria-label="Shop Sunglasses"
+            />
+
+            {/* Card 2: Eyeglasses */}
+            <button
+              type="button"
+              onClick={() => handleCardClick('eyeglasses')}
+              style={{ left: '27.2%', width: '22.5%', top: '26.5%', height: '61.5%' }}
+              className="group absolute z-20 rounded-[20px] sm:rounded-[26px] focus:outline-none cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-[#C86A28]/40 hover:bg-black/[0.02]"
+              title="Shop Eyeglasses"
+              aria-label="Shop Eyeglasses"
+            />
+
+            {/* Card 3: Smart Glasses */}
+            <button
+              type="button"
+              onClick={() => handleCardClick('meta-smart')}
+              style={{ left: '50.1%', width: '23.4%', top: '26.5%', height: '30.0%' }}
+              className="group absolute z-20 rounded-[18px] sm:rounded-[22px] focus:outline-none cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-[#C86A28]/40 hover:bg-black/[0.02]"
+              title="Shop Smart Glasses"
+              aria-label="Shop Smart Glasses"
+            />
+
+            {/* Card 4: Computer Glasses */}
+            <button
+              type="button"
+              onClick={() => handleCardClick('eyeglasses')}
+              style={{ left: '50.1%', width: '23.4%', top: '58.0%', height: '30.0%' }}
+              className="group absolute z-20 rounded-[18px] sm:rounded-[22px] focus:outline-none cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-[#C86A28]/40 hover:bg-black/[0.02]"
+              title="Shop Computer Glasses"
+              aria-label="Shop Computer Glasses"
+            />
+
+            {/* Card 5: Polarized Sunglasses */}
+            <button
+              type="button"
+              onClick={() => handleCardClick('sunglasses', 'shape=aviator')}
+              style={{ left: '74.0%', width: '21.8%', top: '26.5%', height: '30.0%' }}
+              className="group absolute z-20 rounded-[18px] sm:rounded-[22px] focus:outline-none cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-[#C86A28]/40 hover:bg-black/[0.02]"
+              title="Shop Polarized Sunglasses"
+              aria-label="Shop Polarized Sunglasses"
+            />
+
+            {/* Card 6: Reading Glasses */}
+            <button
+              type="button"
+              onClick={() => handleCardClick('eyeglasses')}
+              style={{ left: '74.0%', width: '21.8%', top: '58.0%', height: '30.0%' }}
+              className="group absolute z-20 rounded-[18px] sm:rounded-[22px] focus:outline-none cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-[#C86A28]/40 hover:bg-black/[0.02]"
+              title="Shop Reading Glasses"
+              aria-label="Shop Reading Glasses"
+            />
 
           </div>
-
         </div>
 
       </div>
     </section>
   );
 };
-

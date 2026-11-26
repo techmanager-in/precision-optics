@@ -41,6 +41,28 @@ export const Header: React.FC<HeaderProps> = ({
   const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
+  // Wishlist bounce & sparkle animation on card catch
+  const [isWishlistBumping, setIsWishlistBumping] = useState(false);
+  const [showWishlistSparkles, setShowWishlistSparkles] = useState(false);
+
+  useEffect(() => {
+    let t1: NodeJS.Timeout;
+    let t2: NodeJS.Timeout;
+    const handleCatch = () => {
+      setIsWishlistBumping(true);
+      setShowWishlistSparkles(true);
+      t1 = setTimeout(() => setIsWishlistBumping(false), 700);
+      t2 = setTimeout(() => setShowWishlistSparkles(false), 1200);
+    };
+
+    window.addEventListener("precision:wishlist-catch", handleCatch);
+    return () => {
+      window.removeEventListener("precision:wishlist-catch", handleCatch);
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, []);
+
   // Dynamic Catalog & Showcase State
   const [allCatalogProducts, setAllCatalogProducts] = useState<Product[]>([]);
   const [newArrivalProducts, setNewArrivalProducts] = useState<Product[]>([]);
@@ -404,14 +426,38 @@ export const Header: React.FC<HeaderProps> = ({
               <Search className="w-4 h-4" />
             </button>
             <button
+              id="header-wishlist-btn-mobile"
+              data-wishlist-target="true"
               onClick={openWishlist}
-              className="p-1 text-stone-800 hover:text-black focus:outline-none relative cursor-pointer sm:hidden"
+              className={`p-1 text-stone-800 hover:text-black focus:outline-none relative cursor-pointer sm:hidden transition-transform duration-300 ${
+                isWishlistBumping ? "scale-125 text-[#C86A28]" : ""
+              }`}
               aria-label="Wishlist"
               title="Saved Frames"
             >
-              <Heart className="w-4 h-4" />
+              <div className="relative">
+                <Heart
+                  className={`w-4 h-4 transition-all duration-300 ${
+                    isWishlistBumping
+                      ? "fill-[#C86A28] text-[#C86A28] drop-shadow-[0_0_8px_rgba(200,106,40,0.6)]"
+                      : ""
+                  }`}
+                />
+                {showWishlistSparkles && (
+                  <span className="absolute -inset-2 flex items-center justify-center pointer-events-none" aria-hidden="true">
+                    <span className="animate-ping absolute inline-flex h-6 w-6 rounded-full bg-[#C86A28]/30" />
+                    <span className="absolute -top-2 -left-1 text-[8px] text-[#C86A28] font-bold">✦</span>
+                    <span className="absolute -top-2 -right-1 text-[8px] text-amber-500 font-bold">✦</span>
+                    <span className="absolute -bottom-2 right-0 text-[8px] text-[#C86A28] font-bold">✦</span>
+                  </span>
+                )}
+              </div>
               {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-[8px] w-3 h-3 rounded-full flex items-center justify-center font-sans font-bold">
+                <span
+                  className={`absolute -top-1 -right-1 bg-orange-600 text-white text-[8px] w-3 h-3 rounded-full flex items-center justify-center font-sans font-bold transition-transform duration-300 ${
+                    isWishlistBumping ? "scale-140 bg-[#C86A28]" : ""
+                  }`}
+                >
                   {wishlistCount}
                 </span>
               )}
@@ -480,14 +526,40 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* WISHLIST BUTTON */}
           <button
+            id="header-wishlist-btn-desktop"
+            data-wishlist-target="true"
             onClick={openWishlist}
-            className="hidden sm:flex items-center gap-1 hover:text-orange-600 focus:outline-none uppercase relative cursor-pointer"
+            className={`hidden sm:flex items-center gap-1 hover:text-orange-600 focus:outline-none uppercase relative cursor-pointer transition-transform duration-300 ${
+              isWishlistBumping ? "scale-115 text-[#C86A28]" : ""
+            }`}
             title="Wishlist"
           >
-            <Heart className="w-3.5 h-3.5 text-stone-700" />
-            <span className="hidden md:inline">WISHLIST</span>
+            <div className="relative flex items-center justify-center">
+              <Heart
+                className={`w-3.5 h-3.5 transition-all duration-300 ${
+                  isWishlistBumping
+                    ? "fill-[#C86A28] text-[#C86A28] drop-shadow-[0_0_8px_rgba(200,106,40,0.6)]"
+                    : "text-stone-700"
+                }`}
+              />
+              {showWishlistSparkles && (
+                <span className="absolute -inset-2 flex items-center justify-center pointer-events-none" aria-hidden="true">
+                  <span className="animate-ping absolute inline-flex h-6 w-6 rounded-full bg-[#C86A28]/30" />
+                  <span className="absolute -top-2.5 -left-1 text-[9px] text-[#C86A28] font-bold">✦</span>
+                  <span className="absolute -top-2.5 -right-1 text-[9px] text-amber-500 font-bold">✦</span>
+                  <span className="absolute -bottom-2 right-0 text-[8px] text-[#C86A28] font-bold">✦</span>
+                </span>
+              )}
+            </div>
+            <span className={`hidden md:inline transition-colors ${isWishlistBumping ? "text-[#C86A28] font-bold" : ""}`}>
+              WISHLIST
+            </span>
             {wishlistCount > 0 && (
-              <span className="bg-orange-600 text-white text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-sans">
+              <span
+                className={`bg-orange-600 text-white text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-sans transition-transform duration-300 ${
+                  isWishlistBumping ? "scale-140 bg-[#C86A28]" : ""
+                }`}
+              >
                 {wishlistCount}
               </span>
             )}

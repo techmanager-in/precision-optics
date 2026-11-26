@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useState, useEffect } from "react";
+import React, { memo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Heart, Star, Tag, Zap } from "lucide-react";
@@ -18,8 +18,12 @@ export const HomeProductCard = memo(function HomeProductCard({
   onSelectProduct,
 }: HomeProductCardProps) {
   const router = useRouter();
-  const { isWishlisted, toggleWishlist } = useWishlist();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { isWishlisted, toggleWishlist, triggerFlyAnimation } = useWishlist();
   const wishlisted = isWishlisted(product.id);
+
+  const [isPoppingHeart, setIsPoppingHeart] = useState(false);
+  const [isCardFolding, setIsCardFolding] = useState(false);
 
   // Calculate discount percentage if originalPrice exists
   const hasDiscount = Boolean(product.originalPrice && product.originalPrice > product.price);
@@ -46,26 +50,53 @@ export const HomeProductCard = memo(function HomeProductCard({
     }
   };
 
+  const handleHeartClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!wishlisted) {
+      setIsCardFolding(true);
+      setIsPoppingHeart(true);
+      setTimeout(() => setIsCardFolding(false), 520);
+      setTimeout(() => setIsPoppingHeart(false), 650);
+
+      if (cardRef.current && triggerFlyAnimation) {
+        triggerFlyAnimation(cardRef.current, {
+          id: product.id,
+          name: product.name,
+          brand: product.brand,
+          price: product.price,
+          originalPrice: product.originalPrice,
+          image: imgSrc,
+          rating: product.rating,
+        });
+      }
+    }
+
+    toggleWishlist(product.id, product.name);
+  };
+
   return (
     <div
+      ref={cardRef}
       onClick={handleCardClick}
-      className="w-[232px] sm:w-[244px] shrink-0 min-h-[390px] bg-white border border-[#EBE6DF] rounded-[16px] p-4 flex flex-col justify-between relative group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 select-none"
+      className={`w-[232px] sm:w-[244px] shrink-0 min-h-[390px] bg-white border border-[#EBE6DF] rounded-[16px] p-4 flex flex-col justify-between relative group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 select-none ${
+        isCardFolding ? "scale-[0.98] ring-1 ring-[#C86A28]/40 shadow-inner" : ""
+      }`}
     >
       {/* Wishlist Heart Button */}
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleWishlist(product.id, product.name);
-        }}
-        className="absolute top-3.5 right-3.5 z-20 w-8 h-8 rounded-full bg-white/90 hover:bg-[#C86A28] hover:text-white border border-[#E5E7EB] backdrop-blur-xs flex items-center justify-center transition-all duration-200 focus:outline-none shadow-2xs cursor-pointer"
+        onClick={handleHeartClick}
+        className={`absolute top-3.5 right-3.5 z-20 w-8 h-8 rounded-full bg-white/90 hover:bg-[#C86A28] hover:text-white border border-[#E5E7EB] backdrop-blur-xs flex items-center justify-center transition-all duration-200 focus:outline-none shadow-2xs cursor-pointer ${
+          isPoppingHeart ? "scale-125 bg-[#C86A28] text-white" : ""
+        }`}
         aria-label="Add to wishlist"
       >
         <Heart
-          className={`w-3.5 h-3.5 transition-colors ${
-            wishlisted
-              ? "fill-[#C86A28] text-[#C86A28]"
+          className={`w-3.5 h-3.5 transition-all duration-200 ${
+            wishlisted || isPoppingHeart
+              ? "fill-[#C86A28] text-[#C86A28] group-hover:fill-white group-hover:text-white"
               : "text-[#6B7280] group-hover:text-white"
-          }`}
+          } ${isPoppingHeart ? "scale-110" : ""}`}
         />
       </button>
 

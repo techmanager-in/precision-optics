@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
-import { X, Send } from 'lucide-react';
+import React, { useState } from "react";
+import { X } from "lucide-react";
 
-const WhatsAppIcon: React.FC<{ className?: string }> = ({ className = "w-7 h-7" }) => (
+const WhatsAppLogo: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
   <svg
     viewBox="0 0 24 24"
     fill="currentColor"
@@ -17,81 +17,83 @@ const WhatsAppIcon: React.FC<{ className?: string }> = ({ className = "w-7 h-7" 
 
 export const WhatsAppWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [userMsg, setUserMsg] = useState('');
 
-  const handleSend = () => {
+  const handleOpenChat = () => {
     const text = encodeURIComponent(
-      userMsg || 'Hello Precision Optics! I would like optical advice for luxury frames and prescription lenses.'
+      "Hello Precision Optics! I would like optical advice for luxury frames and prescription lenses."
     );
-    window.open(`https://wa.me/919810012345?text=${text}`, '_blank');
+    window.open(`https://wa.me/919810012345?text=${text}`, "_blank");
     setIsOpen(false);
   };
 
   return (
     <>
-      {/* Floating WhatsApp Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-30 bg-[#25D366] hover:bg-[#20bd5a] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-110 active:scale-95 cursor-pointer border-2 border-white shadow-emerald-950/30 group"
-        title="Chat on WhatsApp with Precision Optics Concierge"
-        aria-label="Chat on WhatsApp with Precision Optics Concierge"
-      >
-        <WhatsAppIcon className="w-7 h-7 text-white fill-white transition-transform group-hover:scale-105" />
-      </button>
+      {/* Floating Circular Trigger Button (When chat popover is closed) */}
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-6 right-6 z-40 bg-[#25D366] hover:bg-[#20BD5A] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-110 active:scale-95 cursor-pointer border-2 border-white shadow-emerald-950/20 group"
+          title="Chat on WhatsApp"
+          aria-label="Chat on WhatsApp"
+        >
+          <WhatsAppLogo className="w-7 h-7 text-white fill-white transition-transform group-hover:scale-105" />
+        </button>
+      )}
 
-      {/* WhatsApp Chat Popover Drawer */}
+      {/* WhatsApp Chat Popover Card (Matching Exact Reference Design) */}
       {isOpen && (
-        <div className="fixed bottom-22 right-4 sm:right-6 z-40 w-[calc(100vw-2rem)] sm:w-80 max-w-[340px] bg-white border border-stone-200 shadow-2xl rounded-2xl overflow-hidden font-sans text-xs animate-in slide-in-from-bottom-4 fade-in duration-200">
-          {/* Top Bar */}
-          <div className="bg-[#075E54] text-white p-4 flex items-center justify-between">
+        <div className="fixed bottom-6 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[350px] max-w-[360px] bg-white rounded-[28px] shadow-[0_16px_50px_rgba(0,0,0,0.18)] border border-gray-100 overflow-hidden font-sans animate-in slide-in-from-bottom-4 fade-in duration-200 select-none">
+          {/* Green Header */}
+          <div className="bg-[#25D366] px-5 py-4 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-full bg-[#25D366] flex items-center justify-center shadow-xs">
-                <WhatsAppIcon className="w-5 h-5 text-white fill-white" />
-              </div>
-              <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider text-white">PRECISION CONCIERGE</h4>
-                <p className="text-[10px] text-emerald-200">Online • Active Master Opticians</p>
-              </div>
+              <WhatsAppLogo className="w-7 h-7 text-white fill-white" />
+              <h3 className="text-white font-bold text-lg tracking-tight">WhatsApp</h3>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-white/80 hover:text-white p-1 transition-colors cursor-pointer"
-              aria-label="Close WhatsApp chat popover"
+              className="w-8 h-8 rounded-full bg-[#1DA851] hover:bg-[#188C43] flex items-center justify-center text-white transition-colors cursor-pointer focus:outline-none"
+              aria-label="Close WhatsApp chat"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 text-white" strokeWidth={2.5} />
             </button>
           </div>
 
-          {/* Chat Body */}
-          <div className="bg-[#ECE5DD] p-4 space-y-3 min-h-[140px] text-stone-800">
-            <div className="bg-white p-3.5 rounded-lg shadow-2xs max-w-[92%] text-xs space-y-1 rounded-tl-none border border-stone-200/50">
-              <p className="font-bold text-[#075E54] text-[10px] uppercase tracking-wider">PRECISION MASTER OPTICIAN</p>
-              <p className="leading-relaxed text-stone-700">
-                Welcome to Precision Optics (Estd. 1969). How can we assist with your frame fitting, luxury models, or custom prescription lenses today?
-              </p>
-              <span className="text-[9px] text-stone-400 block text-right pt-1">Just now</span>
+          {/* White Chat Body */}
+          <div className="bg-[#F8F9FA] p-5 space-y-4">
+            {/* Message Bubble 1 */}
+            <div className="flex items-start">
+              <div className="relative bg-white text-[#374151] text-[13.5px] font-sans font-normal px-5 py-3 rounded-[22px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-gray-100/80 max-w-[90%] leading-relaxed">
+                {/* Speech Bubble Left Tail */}
+                <div
+                  className="absolute -left-2 top-1/2 -translate-y-1/2 w-0 h-0 border-y-[6px] border-y-transparent border-r-[8px] border-r-white drop-shadow-[-1px_1px_1px_rgba(0,0,0,0.03)]"
+                  aria-hidden="true"
+                />
+                hello 👋, welcome to Precision Optics
+              </div>
             </div>
-          </div>
 
-          {/* Input Box */}
-          <div className="p-3 bg-stone-50 border-t border-stone-200 flex gap-2">
-            <input
-              type="text"
-              value={userMsg}
-              onChange={(e) => setUserMsg(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSend();
-              }}
-              placeholder="Ask about frames, Zeiss lenses..."
-              className="flex-1 border border-stone-300 px-3 py-2 rounded-lg focus:outline-none focus:border-[#075E54] text-xs bg-white text-stone-800 placeholder:text-stone-400"
-            />
-            <button
-              onClick={handleSend}
-              className="bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 py-2 rounded-lg transition-colors flex items-center justify-center cursor-pointer shadow-xs"
-              aria-label="Send message on WhatsApp"
-            >
-              <Send className="w-4 h-4" />
-            </button>
+            {/* Message Bubble 2 */}
+            <div className="flex items-start">
+              <div className="relative bg-white text-[#374151] text-[13.5px] font-sans font-normal px-5 py-3 rounded-[22px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-gray-100/80 max-w-[80%] leading-relaxed">
+                {/* Speech Bubble Left Tail */}
+                <div
+                  className="absolute -left-2 top-1/2 -translate-y-1/2 w-0 h-0 border-y-[6px] border-y-transparent border-r-[8px] border-r-white drop-shadow-[-1px_1px_1px_rgba(0,0,0,0.03)]"
+                  aria-hidden="true"
+                />
+                How can we help you?
+              </div>
+            </div>
+
+            {/* Bottom Right Open Chat Action */}
+            <div className="pt-3 flex justify-end">
+              <button
+                onClick={handleOpenChat}
+                className="bg-[#25D366] hover:bg-[#20BD5A] text-white font-sans font-bold text-[14px] px-6 py-2.5 rounded-full flex items-center gap-2.5 shadow-md hover:shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 cursor-pointer"
+              >
+                <span>Open Chat</span>
+                <WhatsAppLogo className="w-5 h-5 text-white fill-white" />
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -277,7 +277,7 @@ export const BlogReelsSection: React.FC<BlogReelsSectionProps> = ({
         <div className="relative">
           <div
             ref={scrollRef}
-            className="flex items-center justify-start sm:justify-center gap-4 sm:gap-5 overflow-x-auto scrollbar-none py-1 pb-3 scroll-smooth"
+            className="flex items-center justify-start lg:justify-center gap-4 sm:gap-5 overflow-x-auto scrollbar-none py-1 pb-3 scroll-smooth px-2 sm:px-4"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {reels.map((item, index) => {
@@ -369,65 +369,48 @@ export const BlogReelsSection: React.FC<BlogReelsSectionProps> = ({
                     </button>
                   </div>
 
-                  {/* Bottom Gradient Overlay & Details */}
-                  <div className="absolute inset-x-0 bottom-0 p-3.5 pt-10 bg-gradient-to-t from-black/85 via-black/45 to-transparent z-20 flex flex-col justify-end">
-                    {item.likes && (
-                      <div className="flex items-center gap-1 text-white/90 text-[11px] font-semibold mb-0.5">
-                        <Heart className="w-3 h-3 text-[#C86A28] fill-[#C86A28]" />
-                        <span>{item.likes}</span>
-                      </div>
-                    )}
+                  {/* Interactive Bottom Action Bar (aligned over baked-in button, no duplicate title/subtitle) */}
+                  <div className="absolute inset-x-0 bottom-0 p-3 sm:p-3.5 z-20 flex items-center justify-between gap-1.5">
+                    {/* Click Target directly overlaying the baked-in SHOP NOW button */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (item.linkUrl) {
+                          if (item.linkUrl.startsWith('http://') || item.linkUrl.startsWith('https://')) {
+                            window.open(item.linkUrl, '_blank');
+                          } else {
+                            window.location.href = item.linkUrl;
+                          }
+                        } else {
+                          const prod = products.find((p) => p.id === item.taggedProductId);
+                          if (prod && onSelectProduct) {
+                            onSelectProduct(prod);
+                          } else {
+                            setSelectedReelIndex(index);
+                          }
+                        }
+                      }}
+                      className="flex-1 h-9 rounded-xl focus:outline-none transition-all duration-200 cursor-pointer bg-black/0 hover:bg-white/10 active:scale-[0.98]"
+                      title={item.linkLabel || 'Shop Look'}
+                      aria-label={item.linkLabel || 'Shop Look'}
+                    />
 
-                    <h3 className="text-white font-black text-xs sm:text-sm uppercase tracking-wider leading-tight">
-                      {item.title}
-                    </h3>
-                    {item.subtitle && (
-                      <p className="text-stone-300 text-[10px] line-clamp-1 mt-0.5">
-                        {item.subtitle}
-                      </p>
-                    )}
-
-                    {/* Quick Shop / Destination Action & Instagram Button */}
-                    <div className="mt-2 flex items-center gap-1.5 w-full">
+                    {/* Instagram Link Button */}
+                    {item.instagramUrl && (
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (item.linkUrl) {
-                            if (item.linkUrl.startsWith('http://') || item.linkUrl.startsWith('https://')) {
-                              window.open(item.linkUrl, '_blank');
-                            } else {
-                              window.location.href = item.linkUrl;
-                            }
-                          } else {
-                            const prod = products.find((p) => p.id === item.taggedProductId);
-                            if (prod && onSelectProduct) {
-                              onSelectProduct(prod);
-                            } else {
-                              setSelectedReelIndex(index);
-                            }
-                          }
+                          window.open(item.instagramUrl, '_blank', 'noopener,noreferrer');
                         }}
-                        className="flex-1 min-w-0 bg-[#C86A28] hover:bg-orange-700 text-white py-1.5 px-2.5 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md transition-all cursor-pointer group-hover:scale-[1.01]"
+                        className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] hover:brightness-110 text-white flex items-center justify-center shrink-0 shadow-md transition-all hover:scale-105 cursor-pointer opacity-90 hover:opacity-100"
+                        title="Watch Reel on Instagram"
+                        aria-label="Watch Reel on Instagram"
                       >
-                        <ShoppingBag className="w-3 h-3 text-white shrink-0" />
-                        <span className="truncate">{item.linkLabel || 'Shop Look'}</span>
+                        <Instagram className="w-3.5 h-3.5 text-white" />
                       </button>
-
-                      {item.instagramUrl && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.open(item.instagramUrl, '_blank', 'noopener,noreferrer');
-                          }}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] hover:brightness-110 text-white flex items-center justify-center shrink-0 shadow-md transition-all hover:scale-105 cursor-pointer"
-                          title="Watch Reel on Instagram"
-                          aria-label="Watch Reel on Instagram"
-                        >
-                          <Instagram className="w-3.5 h-3.5 text-white" />
-                        </button>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </div>
               );
